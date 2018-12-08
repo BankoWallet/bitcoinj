@@ -307,6 +307,7 @@ public class KeyChainGroup implements KeyBag {
      * for more information.
      */
     public void setLookaheadThreshold(int num) {
+        this.lookaheadThreshold = num;
         for (DeterministicKeyChain chain : chains) {
             chain.setLookaheadThreshold(num);
         }
