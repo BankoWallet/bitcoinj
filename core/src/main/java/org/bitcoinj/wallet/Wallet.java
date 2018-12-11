@@ -2434,6 +2434,33 @@ public class Wallet extends BaseTaggableObject
     }
 
     /**
+     * Revoke local pending tx which failed in broadcasting
+     *
+     * WARNING:
+     * Only revoke tx if ALL peers are trusted: if a peer says our tx fails, the peer won't broadcast tx,
+     * as with an RPC server
+     */
+    public void revokePendingTx(Transaction tx) {
+        lock.lock();
+        try {
+            TransactionConfidence txConfidence = tx.getConfidence();
+            if ((txConfidence.getConfidenceType() != ConfidenceType.PENDING) ||
+                    (txConfidence.getSource() != Source.SELF) ||
+                    (txConfidence.getBroadcastBy().size() > 0)) {
+                throw new IllegalStateException("Revoking broadcasted tx");
+            }
+
+            killTxns(Collections.singleton(tx), null);
+            dead.remove(tx.getHash());
+
+            isConsistentOrThrow();
+            saveLater();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
      * If the transactions outputs are all marked as spent, and it's in the unspent map, move it.
      * If the owned transactions outputs are not all marked as spent, and it's in the spent map, move it.
      */
