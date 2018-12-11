@@ -384,6 +384,7 @@ public class KeyChainGroup implements KeyBag {
                 if (k == null) continue;
                 chain.markKeyAsUsed(k);
                 maybeMarkCurrentAddressAsUsed(address);
+                maybeMarkCurrentKeyAsUsed(k);
             }
         }
     }
