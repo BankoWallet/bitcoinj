@@ -454,7 +454,8 @@ public class KeyChainGroup implements KeyBag {
         // It's OK for currentKeys to be empty here: it means we're a married wallet and the key may be a part of a
         // rotating chain.
         for (Map.Entry<KeyChain.KeyPurpose, DeterministicKey> entry : currentKeys.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().equals(key)) {
+            DeterministicKey currentKey = entry.getValue();
+            if (currentKey != null && Arrays.equals(currentKey.getPubKey(), key.getPubKey())) {
                 log.info("Marking key as used: {}", key);
                 currentKeys.put(entry.getKey(), freshKey(entry.getKey()));
                 return;
