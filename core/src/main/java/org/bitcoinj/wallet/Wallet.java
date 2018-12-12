@@ -421,8 +421,10 @@ public class Wallet extends BaseTaggableObject
     public final void addTransactionSigner(TransactionSigner signer) {
         lock.lock();
         try {
-            checkState(signer.isReady(), "Signer instance is not ready to be added into Wallet: " + signer.getClass());
-            signers.add(0, signer);
+            if (signer.isReady())
+                signers.add(signer);
+            else
+                throw new IllegalStateException("Signer instance is not ready to be added into Wallet: " + signer.getClass());
         } finally {
             lock.unlock();
         }
