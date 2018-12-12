@@ -99,7 +99,7 @@ public class LocalTransactionSigner implements TransactionSigner {
             // locate private key in redeem data. For P2PKH and P2PK inputs RedeemData will always contain
             // only one key (with private bytes). For P2SH inputs RedeemData will contain multiple keys, one of which MAY
             // have private bytes
-            if ((key = redeemData.getFullKey()) == null) {
+            if ((key = getSignKey(redeemData)) == null) {
                 log.warn("No local key found for input {}", i);
                 continue;
             }
@@ -147,4 +147,11 @@ public class LocalTransactionSigner implements TransactionSigner {
         return true;
     }
 
+    /**
+     * Override point
+     * subclass may get sign key elsewhere
+     */
+    protected ECKey getSignKey(RedeemData redeemData) {
+        return redeemData.getFullKey();
+    }
 }
